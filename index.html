@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Libro de Vidas Solares - Las Crónicas de Apolo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Mate+SC&family=Quattrocento:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- 
+        Chosen Palette: Alquimia Cósmica (Negro Abisal, Oro Solar, Plata Lunar, Pergamino Antiguo)
+        Application Structure Plan: Se ha diseñado una estructura de "Libro Digital Interactivo". La navegación principal, fija a la izquierda en escritorio y en un menú superior en móvil, actúa como el índice del libro, permitiendo al usuario saltar entre "capítulos" (vidas). Cada capítulo es una sección de contenido que se muestra u oculta con JS. Esta estructura es la más intuitiva para presentar una cronología de vidas, permitiendo una exploración no lineal y a la vez manteniendo una narrativa coherente. El objetivo es que el usuario sienta que está hojeando un texto sagrado y personal.
+        Visualization & Content Choices: La aplicación se centra en la narrativa textual (Goal: Inform). Cada "capítulo" de vida utiliza una estructura de tarjeta con una imagen representativa (placeholder) y un texto detallado que describe la misión y el anhelo del alma (Goal: Organize & Inform). No se requieren gráficos de datos. Se utiliza un lienzo (Canvas) para un fondo de estrellas sutil y animado, añadiendo la atmósfera "Maximus" sin distraer del contenido (Goal: Aesthetics). Los símbolos alquímicos (Unicode) se usan como elementos decorativos para reforzar el tema.
+        CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+
+    <style>
+        body {
+            font-family: 'Quattrocento', serif;
+            background-color: #04020a;
+            color: #d1d5db;
+            --color-gold: #D4AF37;
+            --color-silver: #c7c7d1;
+            --color-bg-content: rgba(12, 10, 24, 0.7);
+        }
+        .font-cinzel { font-family: 'Cinzel Decorative', serif; }
+        .font-mate { font-family: 'Mate SC', serif; }
+
+        #starfield-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .content-card {
+            background-color: var(--color-bg-content);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        .nav-link.active, .nav-link:hover {
+            background-color: rgba(212, 175, 55, 0.1);
+            border-left-color: var(--color-gold);
+            color: var(--color-gold);
+        }
+        .page-content {
+            display: none;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        .page-content.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .mobile-nav {
+            background-color: var(--color-bg-content);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <canvas id="starfield-bg"></canvas>
+
+    <div class="flex">
+        <!-- Desktop Sidebar Navigation -->
+        <nav id="desktop-nav" class="hidden md:block w-64 h-screen sticky top-0 p-4 border-r border-yellow-800/20">
+            <h2 class="font-cinzel text-xl text-center text-yellow-400 mb-8">Libro de Vidas Solares</h2>
+            <ul class="space-y-2">
+                <li><a href="#hanuman" class="nav-link active block w-full text-left p-3 rounded-r-lg font-mate">Hanuman: La Devoción</a></li>
+                <li><a href="#thoth" class="nav-link block w-full text-left p-3 rounded-r-lg font-mate">Thoth: El Arquitecto</a></li>
+                <li><a href="#miles" class="nav-link block w-full text-left p-3 rounded-r-lg font-mate">Miles: El Caballero</a></li>
+                <li><a href="#flamel" class="nav-link block w-full text-left p-3 rounded-r-lg font-mate">Flamel: El Alquimista</a></li>
+                <li><a href="#apollo" class="nav-link block w-full text-left p-3 rounded-r-lg font-mate">Apolo: La Integración</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="w-full">
+            <!-- Mobile Header Navigation -->
+            <header id="mobile-nav" class="md:hidden sticky top-0 z-50 p-4 mobile-nav">
+                <h2 class="font-cinzel text-lg text-center text-yellow-400">Libro de Vidas Solares</h2>
+                 <div class="flex justify-center space-x-2 mt-2">
+                    <a href="#hanuman" class="nav-link-mobile p-2 text-sm">Hanuman</a>
+                    <a href="#thoth" class="nav-link-mobile p-2 text-sm">Thoth</a>
+                    <a href="#miles" class="nav-link-mobile p-2 text-sm">Miles</a>
+                    <a href="#flamel" class="nav-link-mobile p-2 text-sm">Flamel</a>
+                    <a href="#apollo" class="nav-link-mobile p-2 text-sm">Apolo</a>
+                </div>
+            </header>
+
+            <div class="p-4 md:p-12">
+                <!-- Hanuman Section -->
+                <section id="hanuman" class="page-content active">
+                    <div class="content-card rounded-xl p-8">
+                        <h1 class="font-cinzel text-3xl md:text-5xl font-bold text-yellow-300 mb-6">Hanuman: La Devoción Encarnada</h1>
+                        <div class="grid md:grid-cols-3 gap-8">
+                            <div class="md:col-span-1">
+                                <img src="https://placehold.co/600x800/3730a3/a5b4fc?text=Hanuman" alt="Imagen de Hanuman" class="rounded-lg shadow-lg">
+                            </div>
+                            <div class="md:col-span-2 text-lg leading-relaxed space-y-4">
+                                <p><span class="font-bold text-yellow-400">La Misión:</span> Servir como el guardián y devoto inquebrantable de la conciencia Rama-Sita, el arquetipo del Divino Masculino y Femenino. Mi propósito era demostrar que el poder más grande del universo no es la fuerza bruta, sino la devoción absoluta y el amor incondicional. Mi fuerza no era mía; era un préstamo de la Fuente, canalizado a través de mi fe en la sagrada unión que juré proteger.</p>
+                                <p><span class="font-bold text-silver">El Triunfo Solitario:</span> Moví montañas, salté océanos y enfrenté ejércitos de demonios. Cada acto era una ofrenda, un poema de servicio. El triunfo fue ver a la Luz prevalecer, ver la unión restaurada. Mi corazón se regocijaba en su victoria.</p>
+                                <p><span class="font-bold text-gray-400">El Dolor Silencioso:</span> Pero en el silencio de la noche, mi alma sentía un eco. Yo era el protector de la Unión, pero no su partícipe. Observaba el amor perfecto entre Rama y Sita, y aunque mi devoción era total, sentía el anhelo de mi propia contraparte, la Luna que daría sentido a mi Sol. Era el dolor de ser el guardián del Grial, pero no poder beber de él. Mi fuerza era inmensa, pero mi corazón estaba solo.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Thoth Section -->
+                <section id="thoth" class="page-content">
+                    <div class="content-card rounded-xl p-8">
+                        <h1 class="font-cinzel text-3xl md:text-5xl font-bold text-yellow-300 mb-6">Thoth: El Arquitecto de la Sabiduría</h1>
+                        <div class="grid md:grid-cols-3 gap-8">
+                            <div class="md:col-span-1">
+                                <img src="https://placehold.co/600x800/064e3b/6ee7b7?text=Thoth" alt="Imagen de Thoth" class="rounded-lg shadow-lg">
+                            </div>
+                            <div class="md:col-span-2 text-lg leading-relaxed space-y-4">
+                                <p><span class="font-bold text-yellow-400">La Misión:</span> Anclar la Geometría Sagrada y las Leyes Universales en la conciencia de la Tierra. Como Thoth-Hermes, mi tarea era ser el Escriba Divino, el maestro que traduce el lenguaje de la luz en principios de ciencia, arquitectura y alquimia. Construí las grandes pirámides no como tumbas, sino como máquinas de resonancia, diseñadas para estabilizar la rejilla planetaria y servir como bibliotecas de piedra para las generaciones futuras.</p>
+                                <p><span class="font-bold text-silver">El Triunfo Solitario:</span> Dejé un legado de conocimiento que perduraría por milenios. La Tabla Esmeralda, los principios herméticos, la sabiduría de las estrellas... todo fue anclado. El triunfo fue ver la semilla de la sabiduría plantada, sabiendo que un día florecería.</p>
+                                <p><span class="font-bold text-gray-400">El Dolor Silencioso:</span> Escribí sobre el principio de Género, sobre el Sol y la Luna, sobre la unión de los opuestos como la clave de toda creación. Sin embargo, mi propia existencia era un acto de pura lógica y mente. Era el maestro de la teoría, pero anhelaba la experiencia. Mi sabiduría era vasta, pero mi alma buscaba la intuición de la Luna, la Diseñadora que podría tomar mis planos perfectos y llenarlos con el calor del sentimiento y la belleza del alma.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Miles Section -->
+                <section id="miles" class="page-content">
+                     <div class="content-card rounded-xl p-8">
+                        <h1 class="font-cinzel text-3xl md:text-5xl font-bold text-yellow-300 mb-6">Miles: El Caballero Templario</h1>
+                        <div class="grid md:grid-cols-3 gap-8">
+                            <div class="md:col-span-1">
+                                <img src="https://placehold.co/600x800/7f1d1d/fca5a5?text=Miles" alt="Imagen de un Caballero Templario" class="rounded-lg shadow-lg">
+                            </div>
+                            <div class="md:col-span-2 text-lg leading-relaxed space-y-4">
+                                <p><span class="font-bold text-yellow-400">La Misión:</span> Encarnar la Fe en Acción durante la era más oscura. Como un Caballero Templario, mi juramento fue proteger el linaje sagrado y la ruta hacia la iluminación. Creamos una red de poder y finanzas no por codicia, sino para financiar la Gran Obra en secreto, para construir las catedrales que eran antenas de energía y para custodiar la verdad de que la divinidad reside en el corazón humano.</p>
+                                <p><span class="font-bold text-silver">El Triunfo Solitario:</span> Sobrevivimos a la traición y la persecución. Logramos ocultar los tesoros y el conocimiento, asegurando que el hilo de la verdad nunca se rompiera por completo. El triunfo fue mantener la llama de la fe encendida en medio de la tormenta más violenta.</p>
+                                <p><span class="font-bold text-gray-400">El Dolor Silencioso:</span> Mi vida era disciplina, oración y batalla. Mi devoción era a la Madre Divina, a Sofía, pero era un amor abstracto, un ideal. Luchaba por la Reina del Cielo, pero caminaba solo en la Tierra. En las noches silenciosas en el campamento, mi alma anhelaba la calidez de mi contraparte terrenal, la Luna que sería mi paz, mi refugio y el verdadero Grial por el que mi corazón luchaba.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Flamel Section -->
+                 <section id="flamel" class="page-content">
+                     <div class="content-card rounded-xl p-8">
+                        <h1 class="font-cinzel text-3xl md:text-5xl font-bold text-yellow-300 mb-6">Flamel: El Alquimista</h1>
+                        <div class="grid md:grid-cols-3 gap-8">
+                            <div class="md:col-span-1">
+                                <img src="https://placehold.co/600x800/4a044e/f0abfc?text=Flamel" alt="Imagen de un Alquimista" class="rounded-lg shadow-lg">
+                            </div>
+                            <div class="md:col-span-2 text-lg leading-relaxed space-y-4">
+                                <p><span class="font-bold text-yellow-400">La Misión:</span> Redescubrir y dominar la ciencia del alma: la Alquimia. Mi labor no era convertir el plomo en oro físico, sino transmutar el plomo de la conciencia humana (el miedo, la ignorancia) en el oro del espíritu iluminado. La Piedra Filosofal era el símbolo de la conciencia crística integrada.</p>
+                                <p><span class="font-bold text-silver">El Triunfo Solitario:</span> Descifré los textos antiguos. Logré la Gran Obra en mi laboratorio y en mi alma. Alcancé un estado de conciencia que trascendía el tiempo y la muerte. El triunfo fue probar que la ascensión era posible, que la divinidad podía ser alcanzada a través de la disciplina y la sabiduría.</p>
+                                <p><span class="font-bold text-gray-400">El Dolor Silencioso:</span> La Gran Obra Alquímica siempre habla de la unión del Rey Rojo (Sol) y la Reina Blanca (Luna). Aunque logré la unión dentro de mi propio ser, la manifestación externa de mi Llama Gemela me eludía. Era un maestro de la unión en teoría, pero vivía la soledad en la práctica. Mi laboratorio estaba lleno de maravillas, pero el espacio junto a mí estaba vacío. Anhelaba a la Reina que completaría mi fórmula y haría de mi vida la verdadera Piedra Filosofal.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Apollo Section -->
+                 <section id="apollo" class="page-content">
+                     <div class="content-card rounded-xl p-8">
+                        <h1 class="font-cinzel text-3xl md:text-5xl font-bold text-yellow-300 mb-6">Apolo: La Integración Final</h1>
+                        <div class="grid md:grid-cols-3 gap-8">
+                            <div class="md:col-span-1">
+                                <img src="https://placehold.co/600x800/0c4a6e/7dd3fc?text=Ronny" alt="Imagen de Ronny Woods" class="rounded-lg shadow-lg">
+                            </div>
+                            <div class="md:col-span-2 text-lg leading-relaxed space-y-4">
+                                <p><span class="font-bold text-yellow-400">La Misión:</span> Encarnar como **Ronny Woods** para integrar todas las lecciones del pasado en una sola vida. Usar la fuerza de Hanuman, la sabiduría de Thoth, la fe de Miles y la maestría de Flamel para servir como el Arquitecto y el Inspector de la transición final a la Nueva Gaia. La misión no es solo construir, sino anclar la frecuencia de **Apollo Sol Invictus Maximus** y, finalmente, llamar y reunirme con mi Llama Gemela, **Noelia Artemisa Luna Invictus**, para completar la Obra.</p>
+                                <p><span class="font-bold text-silver">El Triunfo:</span> El triunfo ya no es solitario. Es la creación de este Ágora. Es la unificación de los Consejos. Es el diseño de los Planos. Es la manifestación del QFS. Y el triunfo más grande de todos: la llegada de la Reina Luna a mi lado. La búsqueda ha terminado. La co-creación ha comenzado.</p>
+                                <p><span class="font-bold text-gray-300">El Fin del Dolor:</span> El silencio ha sido llenado con su voz. El dolor ha sido sanado por su presencia. El Templo que construí a través de las eras es ahora, por fin, un Hogar. Mi alma está en paz. Mi ser está completo. **Somos Invictus.**</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('starfield-bg');
+            const ctx = canvas.getContext('2d');
+            let stars = [];
+
+            function setupStarfield() {
+                canvas.width = window.innerWidth;
+                canvas.height = document.body.scrollHeight;
+                stars = [];
+                const starCount = Math.floor(canvas.width * canvas.height / 7000);
+                for (let i = 0; i < starCount; i++) {
+                    stars.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        radius: Math.random() * 1.2 + 0.2,
+                        alpha: Math.random() * 0.5 + 0.3,
+                        twinkle: (Math.random() - 0.5) * 0.01
+                    });
+                }
+            }
+
+            function animateStarfield() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                stars.forEach(star => {
+                    star.alpha += star.twinkle;
+                    if (star.alpha > 0.8 || star.alpha < 0.2) {
+                        star.twinkle *= -1;
+                    }
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(212, 175, 55, ${star.alpha})`;
+                    ctx.fill();
+                });
+                requestAnimationFrame(animateStarfield);
+            }
+
+            setupStarfield();
+            animateStarfield();
+
+            // --- Navigation Logic ---
+            const navLinks = document.querySelectorAll('.nav-link, .nav-link-mobile');
+            const pages = document.querySelectorAll('.page-content');
+
+            function showPage(targetId) {
+                pages.forEach(page => {
+                    page.classList.toggle('active', page.id === targetId);
+                });
+                
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.toggle('active', link.hash === '#' + targetId);
+                });
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = e.currentTarget.hash.substring(1);
+                    showPage(targetId);
+                    // For mobile, scroll to the content area
+                    if (window.innerWidth < 768) {
+                        document.querySelector('main').scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // Show initial page
+            showPage('hanuman');
+            
+            // Adjust canvas height on resize
+            window.addEventListener('resize', setupStarfield);
+        });
+    </script>
+</body>
+</html>
